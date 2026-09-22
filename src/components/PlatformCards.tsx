@@ -1,4 +1,5 @@
-import { TrendingUp, TrendingDown, ShoppingBag, DollarSign, BarChart3 } from 'lucide-react';
+import React from 'react';
+import { TrendingUp, TrendingDown, ShoppingBag, DollarSign, BarChart3, Eye } from 'lucide-react';
 import { PlatformStats } from '../data/mockData';
 
 interface Props {
@@ -15,11 +16,14 @@ export default function PlatformCards({ stats }: Props) {
         >
           {/* Gradient accent */}
           <div className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${platform.bgColor}`}></div>
-          
+
           <div className="flex items-start justify-between mb-4">
-            <div>
-              <h3 className="text-white font-bold text-lg">{platform.name}</h3>
-              <p className="text-gray-400 text-xs mt-0.5">{platform.topCategory}</p>
+            <div className="flex items-center gap-3">
+              <span className="text-3xl">{platform.logo}</span>
+              <div>
+                <h3 className="text-white font-bold text-lg">{platform.name}</h3>
+                <p className="text-gray-400 text-xs mt-0.5">{platform.topCategory}</p>
+              </div>
             </div>
             <div className={`px-2.5 py-1 rounded-full text-xs font-medium flex items-center gap-1 ${
               platform.growth > 0 ? 'bg-green-500/10 text-green-400' : 'bg-red-500/10 text-red-400'
@@ -45,7 +49,7 @@ export default function PlatformCards({ stats }: Props) {
               </div>
               <div>
                 <p className="text-xs text-gray-500">Prix moyen</p>
-                <p className="text-white font-semibold">{platform.avgPrice.toFixed(2)}€</p>
+                <p className="text-white font-semibold">{platform.avgPrice.toFixed(1)}€</p>
               </div>
             </div>
             <div className="flex items-center gap-3">
@@ -58,6 +62,20 @@ export default function PlatformCards({ stats }: Props) {
                   {platform.growth > 0 ? '+' : ''}{platform.growth}%
                 </p>
               </div>
+            </div>
+          </div>
+
+          {/* Reliability indicator */}
+          <div className="mt-4 pt-3 border-t border-gray-800/50">
+            <div className="flex items-center justify-between text-xs">
+              <span className="text-gray-500">Fiabilité du scan</span>
+              <span className="text-green-400 font-medium">{platform.reliability}%</span>
+            </div>
+            <div className="mt-1.5 h-1 bg-gray-700 rounded-full overflow-hidden">
+              <div
+                className={`h-full bg-gradient-to-r ${platform.bgColor} rounded-full`}
+                style={{ width: `${platform.reliability}%` }}
+              ></div>
             </div>
           </div>
 
