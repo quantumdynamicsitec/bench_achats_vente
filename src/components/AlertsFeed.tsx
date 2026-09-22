@@ -8,77 +8,107 @@ interface Alert {
   platform: string;
   time: string;
   roi?: string;
+  category?: string;
 }
 
 const alerts: Alert[] = [
   {
     id: '1',
     type: 'opportunity',
-    title: 'Sneakers Adidas Samba en hausse',
-    description: 'Volume +35% sur Vinted, prix moyen +7.8%. ROI potentiel: +45%. Forte demande détectée.',
-    platform: 'Vinted',
-    time: 'Il y a 12 min',
-    roi: '+45%',
+    title: 'DDR4 16GB 3200MHz - Prix plancher',
+    description: 'Baisse de -18.3% sur 30 jours. Prix moyen: 28€. Volume: 12,500/mois. ROI potentiel +42%.',
+    platform: 'eBay',
+    time: 'Il y a 5 min',
+    roi: '+42%',
+    category: 'RAM',
   },
   {
     id: '2',
     type: 'opportunity',
-    title: 'Cartes Pokémon - lots en explosion',
-    description: 'Volume +32% sur Leboncoin. ROI potentiel +52%. Éditions vintage x3-x5 en 6 mois.',
-    platform: 'Leboncoin',
-    time: 'Il y a 25 min',
-    roi: '+52%',
+    title: 'SSD Kingston NV2 1TB - Forte demande',
+    description: 'Volume +35.2% sur 30 jours. Prix en baisse -14.8%. SSD budget #1, revente très rapide.',
+    platform: 'eBay',
+    time: 'Il y a 12 min',
+    roi: '+38%',
+    category: 'SSD',
   },
   {
     id: '3',
-    type: 'warning',
-    title: 'Baisse des prix iPhone 14 Pro',
-    description: 'Les prix baissent de 3.1% sur eBay. Le marché se stabilise après le lancement du 16.',
+    type: 'opportunity',
+    title: 'Ryzen 5 5600 - CPU budget #1',
+    description: 'Volume +25.1%, prix -8.5%. 8,900 ventes/mois. Meilleur CPU budget du marché.',
     platform: 'eBay',
-    time: 'Il y a 45 min',
+    time: 'Il y a 25 min',
+    roi: '+32%',
+    category: 'CPU',
   },
   {
     id: '4',
-    type: 'opportunity',
-    title: 'Funko Pop! - Éditions limitées',
-    description: 'Certaines éditions limitées se revendent x5 sur Leboncoin. Volume +22.8%.',
-    platform: 'Leboncoin',
-    time: 'Il y a 1h',
-    roi: '+48%',
+    type: 'warning',
+    title: 'RTX 5000 annoncées - Baisse GPU en cours',
+    description: 'Les RTX 3060 Ti et 4060 baissent de 5-7%. Opportunité d\'achat, mais attendre la stabilisation.',
+    platform: 'eBay',
+    time: 'Il y a 45 min',
+    category: 'GPU',
   },
   {
     id: '5',
-    type: 'info',
-    title: 'Pic de ventes Levi\'s 501',
-    description: 'La catégorie Mode atteint un pic historique sur Vinted avec 18.2K ventes de Levi\'s 501 ce mois.',
-    platform: 'Vinted',
-    time: 'Il y a 2h',
+    type: 'opportunity',
+    title: 'Câbles USB-C/Lightning - ROI +65%',
+    description: '15,200 ventes/mois sur Leboncoin. Prix moyen 8€. Volume +38.5% sur 30 jours.',
+    platform: 'Leboncoin',
+    time: 'Il y a 1h',
+    roi: '+65%',
+    category: 'Accessoires',
   },
   {
     id: '6',
     type: 'opportunity',
-    title: 'Lots vêtements enfant - forte rotation',
-    description: '19.800 ventes/mois sur Leboncoin. ROI +40%. Petits prix, transport facile.',
+    title: 'Coques iPhone 15 Pro - Volume en hausse',
+    description: '12,400 ventes/mois. Prix moyen 15€. ROI +60%. Petits objets, transport facile.',
     platform: 'Leboncoin',
-    time: 'Il y a 2h',
-    roi: '+40%',
+    time: 'Il y a 1h',
+    roi: '+60%',
+    category: 'Accessoires',
   },
   {
     id: '7',
-    type: 'warning',
-    title: 'Drone DJI Mini 3 - Prix plancher',
-    description: 'Prix en baisse de 4.2% sur eBay. Achat opportun avant la saison estivale.',
+    type: 'info',
+    title: 'RTX 3060 Ti - Meilleur rapport perf/prix',
+    description: '7,800 ventes/mois, prix moyen 260€. Baisse -6.8% mais demande stable. GPU recommandé.',
     platform: 'eBay',
-    time: 'Il y a 3h',
+    time: 'Il y a 2h',
+    category: 'GPU',
   },
   {
     id: '8',
     type: 'opportunity',
-    title: 'Vinyles Rock/Pop - retour en force',
-    description: 'Volume +19.8% sur Leboncoin. Beatles, Pink Floyd, Queen en tête. Pressages originaux premium.',
-    platform: 'Leboncoin',
+    title: 'Ryzen 7 5800X3D - Stock limité',
+    description: 'Meilleur CPU gaming AM4. Volume +22.5%, demande 94/100. Prix stable à 280€.',
+    platform: 'eBay',
+    time: 'Il y a 3h',
+    roi: '+28%',
+    category: 'CPU',
+  },
+  {
+    id: '9',
+    type: 'opportunity',
+    title: 'Sneakers Adidas Samba - Tendance Vinted',
+    description: 'Volume +35.2% sur Vinted. Prix moyen 72€, en hausse de 7.8%. ROI +45%.',
+    platform: 'Vinted',
     time: 'Il y a 4h',
-    roi: '+38%',
+    roi: '+45%',
+    category: 'Mode',
+  },
+  {
+    id: '10',
+    type: 'opportunity',
+    title: 'Hub USB-C 7-en-1 - Accessoire rentable',
+    description: '5,600 ventes/mois sur Leboncoin. Prix 22€. ROI +48%. Indispensable laptops modernes.',
+    platform: 'Leboncoin',
+    time: 'Il y a 5h',
+    roi: '+48%',
+    category: 'Accessoires',
   },
 ];
 
@@ -104,6 +134,15 @@ const typeStyles = {
     badge: 'bg-blue-500/10 text-blue-400',
     badgeText: 'Info',
   },
+};
+
+const categoryBadgeColors: Record<string, string> = {
+  'GPU': 'bg-blue-500/10 text-blue-400 border-blue-500/20',
+  'CPU': 'bg-purple-500/10 text-purple-400 border-purple-500/20',
+  'RAM': 'bg-green-500/10 text-green-400 border-green-500/20',
+  'SSD': 'bg-orange-500/10 text-orange-400 border-orange-500/20',
+  'Accessoires': 'bg-cyan-500/10 text-cyan-400 border-cyan-500/20',
+  'Mode': 'bg-pink-500/10 text-pink-400 border-pink-500/20',
 };
 
 export default function AlertsFeed() {
@@ -139,8 +178,13 @@ export default function AlertsFeed() {
                     <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-medium ${style.badge}`}>
                       {style.badgeText}
                     </span>
+                    {alert.category && (
+                      <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-medium border ${categoryBadgeColors[alert.category] || 'bg-gray-700/50 text-gray-300 border-gray-600/30'}`}>
+                        {alert.category}
+                      </span>
+                    )}
                     {alert.roi && (
-                      <span className="text-[10px] px-1.5 py-0.5 rounded-full font-medium bg-purple-500/10 text-purple-400">
+                      <span className="text-[10px] px-1.5 py-0.5 rounded-full font-medium bg-purple-500/10 text-purple-400 border border-purple-500/20">
                         ROI {alert.roi}
                       </span>
                     )}

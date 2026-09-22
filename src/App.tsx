@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import {
   Bot, LayoutDashboard, TrendingUp, Bell, MessageSquare,
-  Filter, RefreshCw, Activity, Globe, FlaskConical, ChevronRight
+  RefreshCw, Activity, Globe, FlaskConical, Cpu, Calendar
 } from 'lucide-react';
 import PlatformCards from './components/PlatformCards';
 import PlatformDetails from './components/PlatformDetails';
@@ -11,19 +11,21 @@ import AgentChat from './components/AgentChat';
 import MetricsBar from './components/MetricsBar';
 import AlertsFeed from './components/AlertsFeed';
 import MethodologyPanel from './components/MethodologyPanel';
+import ElectronicsTab from './components/ElectronicsTab';
 import { platformStats, trendingItems } from './data/mockData';
 
-type Tab = 'dashboard' | 'trending' | 'alerts' | 'agent' | 'methodology';
+type Tab = 'dashboard' | 'trending' | 'electronics' | 'alerts' | 'agent' | 'methodology';
+type TimeFilter = '7d' | '30d' | 'all';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<Tab>('dashboard');
   const [platformFilter, setPlatformFilter] = useState<string>('all');
   const [sortBy, setSortBy] = useState<string>('volume');
+  const [timeFilter, setTimeFilter] = useState<TimeFilter>('30d');
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [scanProgress, setScanProgress] = useState(0);
   const [lastUpdate, setLastUpdate] = useState(new Date());
 
-  // Simulate live scanning
   useEffect(() => {
     const interval = setInterval(() => {
       setScanProgress((prev) => {
@@ -52,14 +54,20 @@ export default function App() {
   const tabs = [
     { key: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { key: 'trending', label: 'Tendances', icon: TrendingUp },
+    { key: 'electronics', label: 'Électronique', icon: Cpu },
     { key: 'alerts', label: 'Alertes', icon: Bell },
     { key: 'agent', label: 'Agent IA', icon: MessageSquare },
     { key: 'methodology', label: 'Méthodologie', icon: FlaskConical },
   ];
 
+  const timeFilterOptions: { key: TimeFilter; label: string; desc: string }[] = [
+    { key: '7d', label: '7 jours', desc: 'Derniers 7 jours' },
+    { key: '30d', label: '30 jours', desc: 'Derniers 30 jours' },
+    { key: 'all', label: 'Tout', desc: 'Historique complet' },
+  ];
+
   return (
     <div className="min-h-screen bg-gray-950 text-white">
-      {/* Background */}
       <div className="fixed inset-0 bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950 pointer-events-none"></div>
       <div className="fixed top-0 left-1/4 w-96 h-96 bg-purple-600/5 rounded-full blur-3xl pointer-events-none"></div>
       <div className="fixed bottom-0 right-1/4 w-96 h-96 bg-blue-600/5 rounded-full blur-3xl pointer-events-none"></div>
@@ -82,7 +90,7 @@ export default function App() {
               </div>
 
               <div className="flex items-center gap-3">
-                <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-gray-800/50 border border-gray-700/50">
+                <div className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-gray-800/50 border border-gray-700/50">
                   <Globe size={14} className="text-gray-400" />
                   <span className="text-xs text-gray-400">Vinted • Leboncoin • eBay</span>
                 </div>
@@ -102,7 +110,7 @@ export default function App() {
               </div>
             </div>
 
-            {/* Scan progress bar */}
+            {/* Scan progress */}
             <div className="mt-3 h-0.5 bg-gray-800 rounded-full overflow-hidden">
               <div
                 className="h-full bg-gradient-to-r from-purple-500 to-indigo-500 rounded-full transition-all duration-500"
@@ -130,21 +138,47 @@ export default function App() {
           </div>
         </header>
 
+        {/* Time Filter Bar - visible on most tabs */}
+        {activeTab !== 'methodology' && activeTab !== 'agent' && (
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-4">
+            <div className="flex flex-wrap items-center gap-3 bg-gray-900/50 rounded-xl border border-gray-700/50 p-3 backdrop-blur-sm">
+              <div className="flex items-center gap-2 text-gray-400">
+                <Calendar size={16} />
+                <span className="text-sm font-medium">Période :</span>
+              </div>
+              <div className="flex gap-2">
+                {timeFilterOptions.map((opt) => (
+                  <button
+                    key={opt.key}
+                    onClick={() => setTimeFilter(opt.key)}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                      timeFilter === opt.key
+                        ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-lg shadow-purple-500/20'
+                        : 'bg-gray-800/50 text-gray-400 hover:text-white border border-gray-700/50'
+                    }`}
+                    title={opt.desc}
+                  >
+                    {opt.label}
+                  </button>
+                ))}
+              </div>
+              <div className="hidden sm:block ml-auto text-xs text-gray-500">
+                {timeFilter === '7d' && '📅 Données des 7 derniers jours'}
+                {timeFilter === '30d' && '📅 Données des 30 derniers jours'}
+                {timeFilter === 'all' && '📅 Historique complet'}
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Main Content */}
         <main className="max-w-7xl mx-auto px-4 sm:px-6 py-6 space-y-6">
-          {/* Dashboard Tab */}
+          {/* Dashboard */}
           {activeTab === 'dashboard' && (
             <>
-              {/* Metrics */}
               <MetricsBar />
-
-              {/* Platform Cards */}
               <PlatformCards stats={platformStats} />
-
-              {/* Platform Details */}
               <PlatformDetails platforms={platformStats} />
-
-              {/* Charts + Agent */}
               <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
                 <div className="xl:col-span-2">
                   <Charts />
@@ -153,20 +187,16 @@ export default function App() {
                   <AgentChat />
                 </div>
               </div>
-
-              {/* Alerts */}
               <AlertsFeed />
             </>
           )}
 
-          {/* Trending Tab */}
+          {/* Trending */}
           {activeTab === 'trending' && (
             <>
-              {/* Filter Bar */}
               <div className="bg-gray-900/50 rounded-xl border border-gray-700/50 p-4 backdrop-blur-sm">
                 <div className="flex flex-wrap items-center gap-4">
                   <div className="flex items-center gap-2 text-gray-400">
-                    <Filter size={16} />
                     <span className="text-sm font-medium">Plateforme :</span>
                   </div>
                   <div className="flex gap-2">
@@ -189,63 +219,47 @@ export default function App() {
                       </button>
                     ))}
                   </div>
-
-                  <div className="hidden sm:block w-px h-6 bg-gray-700"></div>
-
-                  <div className="flex items-center gap-2 text-gray-400">
-                    <span className="text-sm">Tri :</span>
-                    <select
-                      value={sortBy}
-                      onChange={(e) => setSortBy(e.target.value)}
-                      className="bg-gray-800 border border-gray-700 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:ring-2 focus:ring-purple-500/50"
-                    >
-                      <option value="volume">Volume</option>
-                      <option value="price">Prix</option>
-                      <option value="roi">ROI</option>
-                      <option value="demand">Demande</option>
-                      <option value="trend">Tendance</option>
-                    </select>
-                  </div>
                 </div>
               </div>
 
-              {/* Trending Table */}
-              <TrendingTable items={trendingItems} filter={platformFilter} sortBy={sortBy} onSortChange={setSortBy} />
+              <TrendingTable
+                items={trendingItems}
+                filter={platformFilter}
+                sortBy={sortBy}
+                onSortChange={setSortBy}
+                timeFilter={timeFilter}
+              />
 
-              {/* Charts */}
               <Charts />
             </>
           )}
 
-          {/* Alerts Tab */}
+          {/* Electronics */}
+          {activeTab === 'electronics' && (
+            <ElectronicsTab timeFilter={timeFilter} />
+          )}
+
+          {/* Alerts */}
           {activeTab === 'alerts' && (
             <div className="space-y-6">
               <div className="bg-gray-900/50 rounded-2xl border border-gray-700/50 p-6 backdrop-blur-sm">
                 <h2 className="text-white font-bold text-xl mb-2">🔔 Centre d'Alertes Intelligentes</h2>
                 <p className="text-gray-400 text-sm leading-relaxed">
-                  L'agent IA surveille en continu les 3 plateformes et vous alerte sur les opportunités,
-                  les baisses de prix et les tendances émergentes. Focus sur les <strong className="text-white">petits objets accessibles</strong> avec fort potentiel de revente.
+                  L'agent IA surveille en continu les 3 plateformes. Focus sur les <strong className="text-white">petits objets électroniques</strong> et <strong className="text-white">composants PC</strong> avec fort potentiel de revente.
                 </p>
-                <div className="flex flex-wrap gap-2 mt-4">
-                  <span className="text-xs bg-green-500/10 text-green-400 px-2 py-1 rounded-full border border-green-500/20">✅ 5 alertes actives</span>
-                  <span className="text-xs bg-purple-500/10 text-purple-400 px-2 py-1 rounded-full border border-purple-500/20">🎯 3 opportunités détectées</span>
-                  <span className="text-xs bg-blue-500/10 text-blue-400 px-2 py-1 rounded-full border border-blue-500/20">📊 Scan continu</span>
-                </div>
               </div>
               <AlertsFeed />
-
-              {/* Alert Config */}
               <div className="bg-gray-900/50 rounded-2xl border border-gray-700/50 p-6 backdrop-blur-sm">
                 <h3 className="text-white font-bold mb-4">⚙️ Configuration des Alertes</h3>
                 <div className="space-y-3">
                   {[
-                    { label: 'Opportunités de prix (baisse > 5%)', enabled: true, desc: 'Alerte quand un objet baisse significativement' },
+                    { label: 'Baisse composants PC > 5%', enabled: true, desc: 'Alerte sur les baisses GPU/CPU/RAM/SSD' },
                     { label: 'Nouveaux objets tendance (volume > 5K)', enabled: true, desc: 'Détection automatique des objets en hausse' },
                     { label: 'Alertes de catégorie (croissance > 20%)', enabled: true, desc: 'Surveillance des catégories en explosion' },
                     { label: 'ROI minimum 30%', enabled: true, desc: 'Filtrer uniquement les objets rentables' },
-                    { label: 'Focus Leboncoin - objets < 50€', enabled: true, desc: 'Priorité aux petits objets accessibles' },
+                    { label: 'Focus Leboncoin - petits objets < 50€', enabled: true, desc: 'Priorité aux accessoires électroniques' },
                     { label: 'Exclure objets volumineux', enabled: true, desc: 'Filtre automatique meubles, vélos, etc.' },
-                    { label: 'Surveillance mots-clés personnalisés', enabled: false, desc: 'Ajoutez vos propres termes de recherche' },
+                    { label: 'Alertes GPU spécifiques', enabled: true, desc: 'Suivi RTX 3060 Ti, 4060, 4070 Super' },
                     { label: 'Notifications push en temps réel', enabled: false, desc: 'Recevoir les alertes instantanément' },
                   ].map((setting, i) => (
                     <div key={i} className="flex items-center justify-between py-3 px-4 rounded-xl bg-gray-800/30 border border-gray-700/30 hover:bg-gray-800/50 transition-colors">
@@ -267,13 +281,11 @@ export default function App() {
             </div>
           )}
 
-          {/* Agent Tab */}
+          {/* Agent */}
           {activeTab === 'agent' && (
             <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
               <div className="space-y-6">
                 <AgentChat />
-
-                {/* Agent Status */}
                 <div className="bg-gray-900/50 rounded-2xl border border-gray-700/50 p-5 backdrop-blur-sm">
                   <h3 className="text-white font-bold mb-4">🤖 Statut de l'Agent</h3>
                   <div className="space-y-3">
@@ -299,20 +311,19 @@ export default function App() {
                 </div>
               </div>
 
-              {/* Agent Capabilities */}
               <div className="space-y-6">
                 <div className="bg-gray-900/50 rounded-2xl border border-gray-700/50 p-5 backdrop-blur-sm">
                   <h3 className="text-white font-bold mb-4">⚡ Capacités de l'Agent</h3>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     {[
-                      { icon: '📊', title: 'Analyse de tendances', desc: 'Détection automatique des patterns de marché' },
-                      { icon: '💰', title: 'Suivi des prix', desc: 'Monitoring en temps réel des prix moyens' },
-                      { icon: '📦', title: 'Analyse de volume', desc: 'Quantification des ventes par catégorie' },
+                      { icon: '📊', title: 'Analyse de tendances', desc: 'Détection automatique des patterns' },
+                      { icon: '💰', title: 'Suivi des prix', desc: 'Monitoring temps réel multi-plateformes' },
+                      { icon: '🖥️', title: 'Composants PC', desc: 'GPU, CPU, RAM, SSD - suivi dédié' },
                       { icon: '🎯', title: 'Scoring opportunités', desc: 'ROI prédit par modèle XGBoost' },
-                      { icon: '🔔', title: 'Alertes intelligentes', desc: 'Notifications contextuelles personnalisées' },
-                      { icon: '📈', title: 'Prédictions', desc: 'Projections SARIMA sur 30-90 jours' },
-                      { icon: '🛒', title: 'Focus Leboncoin', desc: 'Petits objets accessibles < 50€' },
-                      { icon: '🔍', title: 'Veille concurrentielle', desc: 'Benchmark multi-plateformes' },
+                      { icon: '🔔', title: 'Alertes intelligentes', desc: 'Notifications contextuelles' },
+                      { icon: '📈', title: 'Prédictions', desc: 'Projections SARIMA 30-90 jours' },
+                      { icon: '🛒', title: 'Focus Leboncoin', desc: 'Petits objets électroniques < 50€' },
+                      { icon: '📅', title: 'Filtres temporels', desc: 'Analyse 7j / 30j / historique' },
                     ].map((cap, i) => (
                       <div key={i} className="bg-gray-800/50 rounded-xl p-3 border border-gray-700/30 hover:border-purple-500/30 transition-colors group">
                         <span className="text-2xl group-hover:scale-110 transition-transform inline-block">{cap.icon}</span>
@@ -326,61 +337,31 @@ export default function App() {
                 <div className="bg-gradient-to-br from-purple-900/30 to-indigo-900/30 rounded-2xl border border-purple-500/20 p-5">
                   <h3 className="text-white font-bold mb-2">💡 Conseil du jour</h3>
                   <p className="text-gray-300 text-sm leading-relaxed">
-                    Les <strong>sneakers Adidas Samba</strong> connaissent une hausse de 35% en volume sur Vinted.
-                    Sur Leboncoin, les <strong>lots de cartes Pokémon</strong> offrent un ROI de +52%.
-                    Ce sont les meilleures opportunités accessibles du moment !
+                    Les <strong>composants PC sont en baisse</strong> (-8% à -18% sur 30j).
+                    C'est le moment d'acheter : <strong>DDR4 16GB à 28€</strong>, <strong>SSD Kingston NV2 à 48€</strong>,
+                    <strong> Ryzen 5 5600 à 110€</strong>. Sur Leboncoin, les accessoires tech (câbles, coques) offrent les meilleurs ROI (+60-65%).
                   </p>
                   <div className="mt-3 flex flex-wrap items-center gap-2">
-                    <span className="text-xs bg-green-500/10 text-green-400 px-2 py-1 rounded-full border border-green-500/20">Samba +35% volume</span>
-                    <span className="text-xs bg-green-500/10 text-green-400 px-2 py-1 rounded-full border border-green-500/20">Pokémon +52% ROI</span>
-                    <span className="text-xs bg-purple-500/10 text-purple-400 px-2 py-1 rounded-full border border-purple-500/20">Leboncoin &lt; 50€</span>
+                    <span className="text-xs bg-red-500/10 text-red-400 px-2 py-1 rounded-full border border-red-500/20">📉 Composants -12%</span>
+                    <span className="text-xs bg-green-500/10 text-green-400 px-2 py-1 rounded-full border border-green-500/20">✅ Opportunité achat</span>
+                    <span className="text-xs bg-purple-500/10 text-purple-400 px-2 py-1 rounded-full border border-purple-500/20">🎯 ROI +42%</span>
                   </div>
                 </div>
-
-                {/* Navigation to methodology */}
-                <button
-                  onClick={() => setActiveTab('methodology')}
-                  className="w-full bg-gray-900/50 rounded-2xl border border-gray-700/50 p-5 backdrop-blur-sm hover:border-purple-500/30 transition-all group text-left"
-                >
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <span className="text-2xl">🔬</span>
-                      <div>
-                        <h4 className="text-white font-medium">Comprendre la méthodologie</h4>
-                        <p className="text-gray-500 text-xs mt-0.5">Découvrez comment l'agent collecte et analyse les données</p>
-                      </div>
-                    </div>
-                    <ChevronRight size={16} className="text-gray-500 group-hover:text-purple-400 transition-colors" />
-                  </div>
-                </button>
               </div>
             </div>
           )}
 
-          {/* Methodology Tab */}
+          {/* Methodology */}
           {activeTab === 'methodology' && (
             <div className="space-y-6">
               <div className="bg-gray-900/50 rounded-2xl border border-gray-700/50 p-6 backdrop-blur-sm">
                 <h2 className="text-white font-bold text-xl mb-2">🔬 Méthodologie & Transparence</h2>
                 <p className="text-gray-400 text-sm leading-relaxed">
-                  MarketBot utilise un pipeline d'analyse en 6 étapes pour transformer les données brutes des 3 plateformes
-                  en insights actionnables. Chaque insight est accompagné d'un <strong className="text-white">score de confiance</strong> pour garantir la fiabilité.
+                  MarketBot utilise un pipeline d'analyse en 6 étapes pour transformer les données brutes en insights actionnables.
+                  Chaque insight est accompagné d'un <strong className="text-white">score de confiance</strong>.
                 </p>
-                <div className="flex flex-wrap gap-3 mt-4">
-                  <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-gray-800/50 border border-gray-700/50">
-                    <span className="text-xs text-gray-400">Dernière mise à jour :</span>
-                    <span className="text-xs text-white font-medium">{lastUpdate.toLocaleTimeString('fr-FR')}</span>
-                  </div>
-                  <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-gray-800/50 border border-gray-700/50">
-                    <span className="text-xs text-gray-400">Données traitées :</span>
-                    <span className="text-xs text-white font-medium">11.45M annonces</span>
-                  </div>
-                </div>
               </div>
-
               <MethodologyPanel />
-
-              {/* Data Quality */}
               <div className="bg-gray-900/50 rounded-2xl border border-gray-700/50 p-6 backdrop-blur-sm">
                 <h3 className="text-white font-bold mb-4">📊 Qualité des Données</h3>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -403,10 +384,6 @@ export default function App() {
                           <span className="text-gray-500">Fréquence</span>
                           <span className="text-white">Toutes les {p.frequency}</span>
                         </div>
-                        <div className="flex justify-between text-xs">
-                          <span className="text-gray-500">Précision modèle</span>
-                          <span className="text-white">{(p.reliability - 2 + Math.random() * 4).toFixed(1)}%</span>
-                        </div>
                       </div>
                       <div className="mt-3 h-1.5 bg-gray-700 rounded-full overflow-hidden">
                         <div
@@ -416,26 +393,6 @@ export default function App() {
                       </div>
                     </div>
                   ))}
-                </div>
-              </div>
-
-              {/* Strategy Note */}
-              <div className="bg-gradient-to-r from-orange-900/20 to-amber-900/20 rounded-2xl border border-orange-500/20 p-5">
-                <h3 className="text-white font-bold mb-2">🛒 Stratégie Leboncoin</h3>
-                <p className="text-gray-300 text-sm leading-relaxed">
-                  Sur Leboncoin, nous privilégions les <strong className="text-orange-300">petits objets à prix accessibles</strong> (généralement &lt; 50€) :
-                  jeux vidéo, livres, figurines, cartes à collectionner, petits électroménagers, lots de vêtements enfant, vinyles...
-                  Nous <strong className="text-red-300">évitons volontairement</strong> les objets volumineux (meubles, vélos) et trop chers (&gt; 150€)
-                  car ils sont plus difficiles à revendre rapidement et génèrent des coûts logistiques élevés.
-                </p>
-                <div className="flex flex-wrap gap-2 mt-3">
-                  <span className="text-xs bg-green-500/10 text-green-400 px-2 py-1 rounded-full">✅ Jeux vidéo</span>
-                  <span className="text-xs bg-green-500/10 text-green-400 px-2 py-1 rounded-full">✅ Collections</span>
-                  <span className="text-xs bg-green-500/10 text-green-400 px-2 py-1 rounded-full">✅ Livres</span>
-                  <span className="text-xs bg-green-500/10 text-green-400 px-2 py-1 rounded-full">✅ Petits électroménagers</span>
-                  <span className="text-xs bg-red-500/10 text-red-400 px-2 py-1 rounded-full">❌ Meubles</span>
-                  <span className="text-xs bg-red-500/10 text-red-400 px-2 py-1 rounded-full">❌ Vélos</span>
-                  <span className="text-xs bg-red-500/10 text-red-400 px-2 py-1 rounded-full">❌ Objets &gt; 150€</span>
                 </div>
               </div>
             </div>
@@ -449,9 +406,6 @@ export default function App() {
               MarketBot AI © 2026 — Agent de veille marché multi-plateformes
             </p>
             <div className="flex items-center gap-4">
-              <span className="text-xs text-gray-600">
-                Données actualisées il y a {Math.floor((Date.now() - lastUpdate.getTime()) / 60000)} min
-              </span>
               <div className="flex items-center gap-1">
                 <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse"></span>
                 <span className="text-xs text-green-400">Systèmes opérationnels</span>
