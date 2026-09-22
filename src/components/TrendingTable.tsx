@@ -72,7 +72,7 @@ export default function TrendingTable({ items, filter, sortBy, onSortChange, tim
       <div className="bg-gray-900/50 rounded-2xl border border-gray-700/50 backdrop-blur-sm overflow-hidden">
         <div className="p-5 border-b border-gray-700/50 flex flex-wrap items-center justify-between gap-3">
           <div>
-            <h3 className="text-white font-bold text-lg flex items-center gap-2">
+            <h3 className="text-white font-bold text-lg flex items-center gap-2 flex-wrap">
               🔥 Top Objets en Tendance
               <span className="text-xs bg-gray-800 text-gray-400 px-2 py-0.5 rounded-full">
                 {sortedItems.length} résultats
@@ -80,8 +80,12 @@ export default function TrendingTable({ items, filter, sortBy, onSortChange, tim
               <span className="text-xs bg-purple-500/10 text-purple-400 px-2 py-0.5 rounded-full border border-purple-500/20">
                 📅 {timeLabel}
               </span>
+              <span className="text-xs bg-green-500/10 text-green-400 px-2 py-0.5 rounded-full border border-green-500/20 flex items-center gap-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse"></span>
+                LIVE
+              </span>
             </h3>
-            <p className="text-gray-500 text-xs mt-1">Cliquez sur un objet pour voir les détails complets</p>
+            <p className="text-gray-500 text-xs mt-1">Cliquez sur un objet pour voir les détails • Les données se mettent à jour automatiquement</p>
           </div>
           <div className="flex items-center gap-2">
             <Filter size={14} className="text-gray-500" />

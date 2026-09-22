@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Cpu, HardDrive, MemoryStick, Monitor, TrendingUp, TrendingDown, Eye, Filter } from 'lucide-react';
 import { componentItems, TrendingItem } from '../data/mockData';
 import ItemDetailModal from './ItemDetailModal';
@@ -25,6 +25,21 @@ export default function ElectronicsTab({ timeFilter }: Props) {
   const [selectedItem, setSelectedItem] = useState<TrendingItem | null>(null);
   const [categoryFilter, setCategoryFilter] = useState<string>('all');
   const [sortBy, setSortBy] = useState<string>('volume');
+  const [liveComponents, setLiveComponents] = useState(componentItems);
+
+  // Simulation de données live - mise à jour toutes les 8 secondes
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setLiveComponents(prev => prev.map(item => ({
+        ...item,
+        volume: Math.floor(item.volume * (0.98 + Math.random() * 0.04)),
+        volume7d: Math.floor(item.volume7d * (0.97 + Math.random() * 0.06)),
+        volume30d: Math.floor(item.volume30d * (0.98 + Math.random() * 0.04)),
+        avgPrice: Math.round(item.avgPrice * (0.99 + Math.random() * 0.02)),
+      })));
+    }, 8000);
+    return () => clearInterval(interval);
+  }, []);
 
   const getVolume = (item: TrendingItem) => {
     switch (timeFilter) {
@@ -51,8 +66,8 @@ export default function ElectronicsTab({ timeFilter }: Props) {
   };
 
   const filteredItems = categoryFilter === 'all'
-    ? componentItems
-    : componentItems.filter(item => item.category === categoryFilter);
+    ? liveComponents
+    : liveComponents.filter(item => item.category === categoryFilter);
 
   const sortedItems = [...filteredItems].sort((a, b) => {
     switch (sortBy) {
@@ -68,7 +83,7 @@ export default function ElectronicsTab({ timeFilter }: Props) {
 
   // Stats par catégorie
   const categoryStats = ['GPU', 'CPU', 'RAM', 'SSD'].map(cat => {
-    const items = componentItems.filter(i => i.category === cat);
+    const items = liveComponents.filter(i => i.category === cat);
     const totalVolume = items.reduce((sum, i) => sum + getVolume(i), 0);
     const avgPrice = items.reduce((sum, i) => sum + i.avgPrice, 0) / items.length;
     const avgTrend = items.reduce((sum, i) => sum + getPriceTrend(i), 0) / items.length;
@@ -86,13 +101,17 @@ export default function ElectronicsTab({ timeFilter }: Props) {
         </p>
         <div className="flex flex-wrap gap-2 mt-4">
           <span className="text-xs bg-blue-500/10 text-blue-400 px-2 py-1 rounded-full border border-blue-500/20">
-            📊 {componentItems.length} produits analysés
+            📊 {liveComponents.length} produits analysés
           </span>
           <span className="text-xs bg-green-500/10 text-green-400 px-2 py-1 rounded-full border border-green-500/20">
             📉 Prix en baisse générale
           </span>
           <span className="text-xs bg-purple-500/10 text-purple-400 px-2 py-1 rounded-full border border-purple-500/20">
             🎯 Opportunités d'achat
+          </span>
+          <span className="text-xs bg-orange-500/10 text-orange-400 px-2 py-1 rounded-full border border-orange-500/20 flex items-center gap-1">
+            <span className="w-1.5 h-1.5 rounded-full bg-orange-400 animate-pulse"></span>
+            Mise à jour live
           </span>
         </div>
       </div>
@@ -182,13 +201,22 @@ export default function ElectronicsTab({ timeFilter }: Props) {
       {/* Table */}
       <div className="bg-gray-900/50 rounded-2xl border border-gray-700/50 backdrop-blur-sm overflow-hidden">
         <div className="p-5 border-b border-gray-700/50">
-          <h3 className="text-white font-bold text-lg flex items-center gap-2">
+          <h3 className="text-white font-bold text-lg flex items-center gap-2 flex-wrap">
             🔥 Composants en Tendance
             <span className="text-xs bg-gray-800 text-gray-400 px-2 py-0.5 rounded-full">
               {sortedItems.length} produits
             </span>
+            <span className="text-xs bg-purple-500/10 text-purple-400 px-2 py-0.5 rounded-full border border-purple-500/20">
+              {timeFilter === '7d' && '📅 7 derniers jours'}
+              {timeFilter === '30d' && '📆 30 derniers jours'}
+              {timeFilter === 'all' && '📊 Historique complet'}
+            </span>
+            <span className="text-xs bg-green-500/10 text-green-400 px-2 py-0.5 rounded-full border border-green-500/20 flex items-center gap-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse"></span>
+              LIVE
+            </span>
           </h3>
-          <p className="text-gray-500 text-xs mt-1">Cliquez sur un produit pour voir les détails complets</p>
+          <p className="text-gray-500 text-xs mt-1">Cliquez sur un produit pour voir les détails • Données mises à jour automatiquement</p>
         </div>
 
         <div className="overflow-x-auto">

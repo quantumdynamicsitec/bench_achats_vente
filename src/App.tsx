@@ -25,6 +25,21 @@ export default function App() {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [scanProgress, setScanProgress] = useState(0);
   const [lastUpdate, setLastUpdate] = useState(new Date());
+  const [liveData, setLiveData] = useState(trendingItems);
+
+  // Simulation de données live - mise à jour toutes les 10 secondes
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setLiveData(prev => prev.map(item => ({
+        ...item,
+        volume: Math.floor(item.volume * (0.98 + Math.random() * 0.04)),
+        volume7d: Math.floor(item.volume7d * (0.97 + Math.random() * 0.06)),
+        volume30d: Math.floor(item.volume30d * (0.98 + Math.random() * 0.04)),
+        avgPrice: Math.round(item.avgPrice * (0.99 + Math.random() * 0.02)),
+      })));
+    }, 10000);
+    return () => clearInterval(interval);
+  }, []);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -124,7 +139,7 @@ export default function App() {
                 <button
                   key={tab.key}
                   onClick={() => setActiveTab(tab.key as Tab)}
-                  className={`flex items-center gap-2 px-4 py-2.5 rounded-t-lg text-sm font-medium transition-all whitespace-nowrap ${
+                  className={`flex items-center gap-2 px-4 py-2.5 rounded-t-lg text-sm font-medium transition-all whitespace-nowrap relative ${
                     activeTab === tab.key
                       ? 'bg-gray-800/50 text-white border-b-2 border-purple-500'
                       : 'text-gray-500 hover:text-gray-300 hover:bg-gray-800/30'
@@ -132,6 +147,11 @@ export default function App() {
                 >
                   <tab.icon size={16} />
                   {tab.label}
+                  {tab.key === 'electronics' && (
+                    <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[9px] px-1 py-0.5 rounded-full font-bold animate-pulse">
+                      NEW
+                    </span>
+                  )}
                 </button>
               ))}
             </nav>
@@ -141,31 +161,39 @@ export default function App() {
         {/* Time Filter Bar - visible on most tabs */}
         {activeTab !== 'methodology' && activeTab !== 'agent' && (
           <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-4">
-            <div className="flex flex-wrap items-center gap-3 bg-gray-900/50 rounded-xl border border-gray-700/50 p-3 backdrop-blur-sm">
-              <div className="flex items-center gap-2 text-gray-400">
-                <Calendar size={16} />
-                <span className="text-sm font-medium">Période :</span>
+            <div className="flex flex-wrap items-center gap-3 bg-gradient-to-r from-purple-900/20 to-indigo-900/20 rounded-xl border border-purple-500/30 p-4 backdrop-blur-sm">
+              <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1.5">
+                  <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse"></span>
+                  <span className="text-xs text-green-400 font-medium">LIVE</span>
+                </div>
+                <div className="w-px h-4 bg-gray-700"></div>
+                <Calendar size={16} className="text-purple-400" />
+                <span className="text-sm font-semibold text-white">Visualisation temporelle :</span>
               </div>
               <div className="flex gap-2">
                 {timeFilterOptions.map((opt) => (
                   <button
                     key={opt.key}
                     onClick={() => setTimeFilter(opt.key)}
-                    className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                    className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all ${
                       timeFilter === opt.key
-                        ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-lg shadow-purple-500/20'
-                        : 'bg-gray-800/50 text-gray-400 hover:text-white border border-gray-700/50'
+                        ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-lg shadow-purple-500/30 scale-105'
+                        : 'bg-gray-800/70 text-gray-300 hover:text-white hover:bg-gray-700/70 border border-gray-600/50'
                     }`}
                     title={opt.desc}
                   >
+                    {opt.key === '7d' && '📅 '}
+                    {opt.key === '30d' && '📆 '}
+                    {opt.key === 'all' && '📊 '}
                     {opt.label}
                   </button>
                 ))}
               </div>
-              <div className="hidden sm:block ml-auto text-xs text-gray-500">
-                {timeFilter === '7d' && '📅 Données des 7 derniers jours'}
-                {timeFilter === '30d' && '📅 Données des 30 derniers jours'}
-                {timeFilter === 'all' && '📅 Historique complet'}
+              <div className="hidden sm:block ml-auto text-xs text-purple-300 font-medium">
+                {timeFilter === '7d' && '✨ Affichage : 7 derniers jours'}
+                {timeFilter === '30d' && '✨ Affichage : 30 derniers jours'}
+                {timeFilter === 'all' && '✨ Affichage : Historique complet'}
               </div>
             </div>
           </div>
@@ -223,7 +251,7 @@ export default function App() {
               </div>
 
               <TrendingTable
-                items={trendingItems}
+                items={liveData}
                 filter={platformFilter}
                 sortBy={sortBy}
                 onSortChange={setSortBy}
