@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { 
   Bot, LayoutDashboard, TrendingUp, Bell, MessageSquare, 
   Filter, RefreshCw, Activity, Globe
